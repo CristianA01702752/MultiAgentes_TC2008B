@@ -1,4 +1,0 @@
-Flask>=1.0.0
-Mesa
-pandas
-numpy

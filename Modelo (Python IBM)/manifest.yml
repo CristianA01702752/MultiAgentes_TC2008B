@@ -1,4 +1,0 @@
----
-applications:
- - name: traffic movility server
-   random-route: true
