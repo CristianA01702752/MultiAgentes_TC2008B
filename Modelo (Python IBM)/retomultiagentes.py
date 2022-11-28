@@ -24,7 +24,7 @@ SPAWN_PROBABILITY = 5 #Probabilidad de que spawnee un auto 1 en X
 
 CAR_VELOCITY = [8, 7, 6, 5, 4, 3, 2, 0]
 FOV = 35 #Metros
-DISTANCE_BETWEEN_VEHICLES = 6
+DISTANCE_BETWEEN_VEHICLES = 15
 COOLDOWN = 8
 
 #Scenario 0
@@ -45,6 +45,15 @@ def get_grid(model):
       grid[x][y] = 1
   return grid
 
+def get_ids(model):
+  grid = np.zeros( (model.grid.width, model.grid.height) )
+  for (content, x, y) in model.grid.coord_iter():
+    if (content == None):
+      grid[x][y] = 0
+    else:
+      grid[x][y] = content.id
+  return grid
+
 class RoadVehicleAgent(Agent):
   def __init__(self, unique_id, model, lane, pos, status):
     super().__init__(unique_id, model)
@@ -61,6 +70,7 @@ class RoadVehicleAgent(Agent):
     self.distanceVehicle = None
     self.velocityFront = None
     self.distanceVehicleBack = None
+    self.id = unique_id
 
   def can_move(self, x, y):
     return (x >= 0 and x < self.model.grid.width and
