@@ -31,13 +31,13 @@ def updatePositions():
     positions = []
     model.step()
     matrix = np.array(get_grid(model))
-    print(matrix)
+    #print(matrix)
     for x in range(WIDTH):
         for z in range(HEIGHT):
             if (matrix[x, z] != 0):
                 pos = [x, 0, z]
                 positions.append(pos)
-                print(positions)
+                #print(positions)
     return positions
 
 def positionsToJSON(ps):
