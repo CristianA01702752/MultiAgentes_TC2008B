@@ -33,9 +33,9 @@ def updatePositions():
     matrix = np.array(get_grid(model))
     print(matrix)
     for x in range(WIDTH):
-        for y in range(HEIGHT):
-            if (matrix[x, y] != 0):
-                pos = [x, y, 0]
+        for z in range(HEIGHT):
+            if (matrix[x, z] != 0):
+                pos = [x, 0, z]
                 positions.append(pos)
                 print(positions)
     return positions

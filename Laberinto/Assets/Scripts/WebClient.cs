@@ -1,4 +1,4 @@
-// TC2008B Modelación de Sistemas Multiagentes con gráficas computacionales
+// TC2008B Modelaciï¿½n de Sistemas Multiagentes con grï¿½ficas computacionales
 // C# client to interact with Python server via POST
 // Sergio Ruiz-Loza, Ph.D. March 2021
 
@@ -31,10 +31,35 @@ public class WebClient : MonoBehaviour
             }
             else
             {
-                Debug.Log(www.downloadHandler.text);    // Answer from Python
-                Vector3 tPos = JsonUtility.FromJson<Vector3>(www.downloadHandler.text.Replace('\'', '\"'));
+                //Debug.Log(www.downloadHandler.text);    // Answer from Python
                 //Debug.Log("Form upload complete!");
-                Debug.Log(tPos);
+                //Data tPos = JsonUtility.FromJson<Data>(www.downloadHandler.text.Replace('\'', '\"'));
+                //Debug.Log(tPos);
+                List<Vector3> newPositions = new List<Vector3>();
+                string txt = www.downloadHandler.text.Replace('\'', '\"');
+                txt = txt.TrimStart('"', '{', 'd', 'a', 't', 'a', ':', '[');
+                txt = "{\"" + txt;
+                txt = txt.TrimEnd(']', '}');
+                txt = txt + '}';
+                string[] strs = txt.Split(new string[] { "}, {" }, StringSplitOptions.None);
+                Debug.Log("strs.Length:"+strs.Length);
+                for (int i = 0; i < strs.Length; i++)
+                {
+                    strs[i] = strs[i].Trim();
+                    if (i == 0) strs[i] = strs[i] + '}';
+                    else if (i == strs.Length - 1) strs[i] = '{' + strs[i];
+                    else strs[i] = '{' + strs[i] + '}';
+                    Vector3 test = JsonUtility.FromJson<Vector3>(strs[i]);
+                    newPositions.Add(test);
+                }
+
+                List<Vector3> poss = new List<Vector3>();
+                for(int s = 0; s < agents.Length; s++)
+                {
+                    //spheres[s].transform.localPosition = newPositions[s];
+                    poss.Add(newPositions[s]);
+                }
+                positions.Add(poss);
             }
         }
 
