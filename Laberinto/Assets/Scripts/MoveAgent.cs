@@ -1,27 +1,22 @@
 using System.Collections;
 using System.Collections.Generic;
 using UnityEngine;
+using System;
 using UnityEngine.Networking;
-using TMPro;
+
 
 public class MoveAgent : MonoBehaviour
 {
-    // Start is called before the first frame update
    public int id;
    public string position;
-    void Start()
+
+    IEnumerator Start()
     {
-        InvokeRepeating("GetData", 1f, 1f);
+        InvokeRepeating("GetData", 0.0f, 1.01f);
+        yield return new WaitForSeconds(300);
+        CancelInvoke("GetData");
+        
     }
-
-    // Update is called once per frame
-    void Update()
-    {
-       // Invoke GetData every second
-
-         
-    }
-
 
     void GetData ()
     {
@@ -29,11 +24,9 @@ public class MoveAgent : MonoBehaviour
     }
     
     IEnumerator GetDataCoroutine(){
-        // Wait 5 seconds before doing a request
-        string uri = "http://localhost:8585/position?id=" + id;
-        using (UnityWebRequest www = UnityWebRequest.Get(uri))
+        string url = "http://localhost:8585/position?id=" + id;
+        using (UnityWebRequest www = UnityWebRequest.Get(url))
         {
-            // Wait 1 second
             yield return www.SendWebRequest();
             if(www.isNetworkError || www.isHttpError)
             {
@@ -49,7 +42,6 @@ public class MoveAgent : MonoBehaviour
                 position = position.TrimStart('[');
                 position = position.TrimEnd(']');
                 
-                // Only get x from position
                 string[] positionArray = position.Split(',');
                 string x = positionArray[0];
                 x= x.TrimStart('{', '"', 'x', '"', ':');
@@ -62,11 +54,16 @@ public class MoveAgent : MonoBehaviour
                 z= z.TrimEnd(' ');
                 int positionZ = int.Parse(z);
                 // Debug.Log(positionZ)
+                
+                // string s = positionArray[4];
+                // s = s.TrimStart(' ','"', 's', '"', ':');
+                // s = s.TrimEnd(' ');
+                // int status_car = int.Parse(s);
 
-                // Move car
+
                 Vector3 currentPosition = transform.position;
                 Vector3 targetPos = new Vector3(positionX , 0.0f, positionZ);
-                 // Move using Lerp
+
                 float timeElapsed = 0;
                 float timeToMove = 1f;
                 while (timeElapsed < timeToMove)
@@ -75,9 +72,7 @@ public class MoveAgent : MonoBehaviour
                     timeElapsed += Time.deltaTime;
                     yield return null;
                 }
-                
 
-                // [{"x": 0, "z": 9, "y": 0, "val": 2.0}]
             }
         }
     }

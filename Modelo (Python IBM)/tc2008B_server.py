@@ -20,7 +20,11 @@ POSITIONS = []
 
 model = RoadModel(WIDTH, HEIGHT)
 
+def take_third(POS):
+    return POS[3]
+
 def updatePositions():
+    POSITIONS.clear()
     global model
     model.step()
     matrix = np.array(get_grid(model))
@@ -30,16 +34,15 @@ def updatePositions():
         for z in range(HEIGHT):
             if (matrix[x, z] != 0):
                 #print(matrix[x,z])
-                pos = [x, z, 0, matrix_ids[x, z]]
+                pos = [x, z, 0, matrix_ids[x, z], matrix[x, z]]
                 POSITIONS.append(pos)
-                #print(positions)
+                #print(POSITIONS)
+                
 
 def getPositionById(id, ps):
-    maxZ = 0
     pos = None
     for p in ps:
-        if p[3] == id and p[1] > maxZ:
-            maxZ = p[1]
+        if p[3] == id:
             pos = p
     
     return pos
@@ -52,12 +55,16 @@ def positionsToJSON(ps):
             "x" : p[0],
             "z" : p[1],
             "y" : p[2],
-            "val" : p[3]
+            "id" : p[3],
+            "s":p[4]
         }
         posDICT.append(pos)
         #print(json.dumps(posDICT))
     return json.dumps(posDICT)
 
+"""
+Hello World app for running Python apps on Bluemix
+"""
 app = Flask(__name__, static_url_path='')
 
 port = int(os.getenv('PORT', 8585))
@@ -73,23 +80,26 @@ def modelPosition():
     id = args.get('id')
     if id is not None:
         id = float(id)
-        pos = getPositionById(id, POSITIONS)
+        sorted_pos2 = sorted(POSITIONS, key=take_third)
+        pos = getPositionById(id, sorted_pos2)
         if pos is not None:
             pos = positionsToJSON([pos])
             return pos
         else:
-            resp = "Agente llego a final"
+            resp = "Not created yet"
         return resp
     else:
-        resp = "No se ingreso id"
+        resp = "Error with the id ¿?"
         return resp
 
 @app.route('/step', methods=['GET'])
 def modelStep():
     updatePositions()
+    sorted_pos = sorted(POSITIONS, key=take_third)
     modelPosition()
-    resp = "{\"data\":" + positionsToJSON(POSITIONS) + "}"
-    print(resp)
+    #print(sorted_pos)
+    resp = "{\"data\":" + positionsToJSON(sorted_pos) + "}"
+    #print(resp)
     return resp
 
 

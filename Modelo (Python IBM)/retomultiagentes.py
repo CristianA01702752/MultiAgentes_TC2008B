@@ -24,7 +24,7 @@ SPAWN_PROBABILITY = 5 #Probabilidad de que spawnee un auto 1 en X
 
 CAR_VELOCITY = [8, 7, 6, 5, 4, 3, 2, 0]
 FOV = 35 #Metros
-DISTANCE_BETWEEN_VEHICLES = 15
+DISTANCE_BETWEEN_VEHICLES = 8
 COOLDOWN = 8
 
 #Scenario 0
@@ -32,7 +32,7 @@ NUMBER_OF_CHECKPOINTS = 5
 INITIAL_VALUES = [0, 0] #Firste number of cars, second average velocity
 
 
-TEST_SCENARIO = 0 #1 = Sin propuesta de solucion, 0 Con propuesta de solucion
+TEST_SCENARIO = 1 #1 = Sin propuesta de solucion, 0 Con propuesta de solucion
 
 def get_grid(model):
   grid = np.zeros( (model.grid.width, model.grid.height) )
@@ -327,6 +327,7 @@ class RoadModel(Model):
           aux2 = 0
 
   def step(self):
+    global CURRENT_TIME
     if (MAX_ITERATIONS / 2 == CURRENT_TIME):
       self.brokenCar()
       print("Spawn Broken Car")
@@ -336,3 +337,4 @@ class RoadModel(Model):
       self.numOfAgentsPerCheckpoint()
     self.datacollector.collect(self)
     self.schedule.step()
+    CURRENT_TIME += 1
