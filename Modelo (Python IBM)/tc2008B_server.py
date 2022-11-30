@@ -39,7 +39,7 @@ def updatePositions():
                 #print(POSITIONS)
                 
 
-def getPositionById(id, ps):
+def getId(id, ps):
     pos = None
     for p in ps:
         if p[3] == id:
@@ -75,13 +75,13 @@ def root():
     return resp
 
 @app.route('/position', methods=['GET'])
-def modelPosition():
+def checkPosition():
     args = request.args
     id = args.get('id')
     if id is not None:
         id = float(id)
-        sorted_pos2 = sorted(POSITIONS, key=take_third)
-        pos = getPositionById(id, sorted_pos2)
+        
+        pos = getId(id, POSITIONS)
         if pos is not None:
             pos = positionsToJSON([pos])
             return pos
@@ -96,7 +96,7 @@ def modelPosition():
 def modelStep():
     updatePositions()
     sorted_pos = sorted(POSITIONS, key=take_third)
-    modelPosition()
+    checkPosition()
     #print(sorted_pos)
     resp = "{\"data\":" + positionsToJSON(sorted_pos) + "}"
     #print(resp)
