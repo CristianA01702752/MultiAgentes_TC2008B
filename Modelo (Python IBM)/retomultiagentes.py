@@ -12,7 +12,7 @@ import time
 import datetime
 
 MAX_VELOCITY = 8 #m/s
-MAX_ITERATIONS = 400 #200 Sweet spot Siempre tiene que ser multiplo de 2 si no, no aparece el vehiculo roto
+MAX_ITERATIONS = 200 #200 Sweet spot Siempre tiene que ser multiplo de 2 si no, no aparece el vehiculo roto
 WIDTH = 30
 HEIGHT = 1000
 SPAWN_COORDS = [5, 15, 25]
@@ -32,7 +32,7 @@ NUMBER_OF_CHECKPOINTS = 5
 INITIAL_VALUES = [0, 0] #Firste number of cars, second average velocity
 
 
-TEST_SCENARIO = 0 #1 = Sin propuesta de solucion, 0 Con propuesta de solucion
+TEST_SCENARIO = 1 #1 = Sin propuesta de solucion, 0 Con propuesta de solucion
 
 def get_grid(model):
   grid = np.zeros( (model.grid.width, model.grid.height) )
@@ -43,6 +43,15 @@ def get_grid(model):
       grid[x][y] = 0.5
     else :
       grid[x][y] = 1
+  return grid
+
+def get_ids(model):
+  grid = np.zeros( (model.grid.width, model.grid.height) )
+  for (content, x, y) in model.grid.coord_iter():
+    if (content == None):
+      grid[x][y] = 0
+    else:
+      grid[x][y] = content.id
   return grid
 
 class RoadVehicleAgent(Agent):
@@ -61,6 +70,7 @@ class RoadVehicleAgent(Agent):
     self.distanceVehicle = None
     self.velocityFront = None
     self.distanceVehicleBack = None
+    self.id = unique_id
 
   def can_move(self, x, y):
     return (x >= 0 and x < self.model.grid.width and
@@ -317,6 +327,7 @@ class RoadModel(Model):
           aux2 = 0
 
   def step(self):
+    global CURRENT_TIME
     if (MAX_ITERATIONS / 2 == CURRENT_TIME):
       self.brokenCar()
       print("Spawn Broken Car")
@@ -326,3 +337,4 @@ class RoadModel(Model):
       self.numOfAgentsPerCheckpoint()
     self.datacollector.collect(self)
     self.schedule.step()
+    CURRENT_TIME += 1
