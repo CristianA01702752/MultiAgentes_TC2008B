@@ -12,7 +12,7 @@ public class MoveAgent : MonoBehaviour
 
     IEnumerator Start()
     {
-        InvokeRepeating("GetData", 0.0f, 1.01f);
+        InvokeRepeating("GetData", 1.0f, 0.89f);
         yield return new WaitForSeconds(300);
         CancelInvoke("GetData");
         
@@ -65,7 +65,7 @@ public class MoveAgent : MonoBehaviour
                 Vector3 targetPos = new Vector3(positionX , 0.0f, positionZ);
 
                 float timeElapsed = 0;
-                float timeToMove = 1f;
+                float timeToMove = 0.9f;
                 while (timeElapsed < timeToMove)
                 {
                     transform.position = Vector3.Lerp(currentPosition, targetPos, timeElapsed / timeToMove);

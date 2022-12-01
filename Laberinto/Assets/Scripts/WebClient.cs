@@ -14,8 +14,8 @@ public class WebClient : MonoBehaviour
     // Start is called before the first frame update
     IEnumerator Start()
     {
-        //Invoke("GetData", 0.3f);
-        InvokeRepeating("GetData", 0.0f, 1.0f);
+        Invoke("GetData", 1f);
+        InvokeRepeating("GetData", 1.0f, 1.0f);
         yield return new WaitForSeconds(300);
         CancelInvoke("GetData");
 

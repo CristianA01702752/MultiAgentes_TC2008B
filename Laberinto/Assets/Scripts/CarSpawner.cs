@@ -7,7 +7,7 @@ using UnityEngine.Networking;
 
 public class CarSpawner : MonoBehaviour
 {
-    public int id = 0;
+    public int id = 1;
     // public Transform[] autosPrefabs;
     // Transform[] carros = new Transform[999];
     

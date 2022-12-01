@@ -24,8 +24,8 @@ SPAWN_PROBABILITY = 5 #Probabilidad de que spawnee un auto 1 en X
 
 CAR_VELOCITY = [8, 7, 6, 5, 4, 3, 2, 0]
 FOV = 35 #Metros
-DISTANCE_BETWEEN_VEHICLES = 6
-COOLDOWN = 8
+DISTANCE_BETWEEN_VEHICLES = 8
+COOLDOWN = 20
 
 #Scenario 0
 NUMBER_OF_CHECKPOINTS = 5
@@ -73,23 +73,22 @@ class RoadVehicleAgent(Agent):
     self.id = unique_id
 
   def can_move(self, x, y):
-    return (x >= 0 and x < self.model.grid.width and
+    return (x >= 0 and x < self.model.grid.width and 
             y >= 0 and y < self.model.grid.height)
 
   def moveForward(self):
-    if (self.velocity > 0):
-      x = self.position[0]
+    if (self.velocity > 0 ):
+      x = self.position[0] 
       y = self.position[1] + self.velocity
       if self.can_move(x, y):
-        if self.model.grid.is_cell_empty( (x, y)):
+        if self.model.grid.is_cell_empty( (x, y)): 
           self.position = (x, y)
           self.model.grid.move_agent(self, (x, y))
         aux = (self.currentCheckpoint * self.model.distanceBetweenCheckpoints) + self.model.distanceBetweenCheckpoints
-        if y > aux and aux < 5:
+        if y > aux :
           self.currentCheckpoint += 1
       else :
-        self.model.schedule.remove(self)
-        self.model.grid.remove_agent(self)
+        self.model.pushDeletedAgent(self)
 
   def accelerate(self):
     if (self.velocity != self.maxVelocity):
@@ -120,11 +119,12 @@ class RoadVehicleAgent(Agent):
           self.accelerate()
 
   def stopBroken(self):
-    if (self.position[1] >= HEIGHT * 0.4 and self.velocity >=0):
+    if (self.position[1] >= HEIGHT * 0.4 and self.velocity >0):
       self.decelerate()
 
-  def checkFrontDistance(self): #Calcula la distancia entre el vehiculo de enfrente, si es mayor a FOV es None
+  def checkFrontDistance(self): 
     distanceVehicle = 0
+    empty = False
     x = self.position[0]
     y = self.position[1] + 1
     while (distanceVehicle < FOV and self.can_move(x, y)):
@@ -133,6 +133,13 @@ class RoadVehicleAgent(Agent):
         y += 1
       else:
         break
+    
+    y += 5
+    if (distanceVehicle >= FOV or (self.can_move(x, y) == False)):
+      self.distanceVehicle = None
+      self.velocityFront = None
+    else:
+      self.distanceVehicle = distanceVehicle
 
     if (distanceVehicle >= FOV or distanceVehicle == 0):
       self.distanceVehicle = None
@@ -176,7 +183,7 @@ class RoadVehicleAgent(Agent):
       return True
     elif self.distanceVehicleBack > (FOV - 10):
       return True
-    else:
+    else: 
       return False
 
   def animationChangingLine(self, side):
@@ -189,8 +196,7 @@ class RoadVehicleAgent(Agent):
         self.changingLane = False
         self.changingTo = 0
     else:
-      self.model.schedule.remove(self)
-      self.model.grid.remove_agent(self)
+      self.model.pushDeletedAgent(self)
 
   def changeLane(self, side):
     if (self.canChangeLane(side)):
@@ -205,8 +211,7 @@ class RoadVehicleAgent(Agent):
           self.lane += side
           self.cooldown = COOLDOWN
       else:
-        self.model.schedule.remove(self)
-        self.model.grid.remove_agent(self)
+        self.model.pushDeletedAgent(self)
 
   def updateHighwaySpeed (self):
     x = self.lane
@@ -238,9 +243,9 @@ class RoadVehicleAgent(Agent):
     elif (self.lane == 1): #Central Lane
       if self.isBetterLane(self.checkHighwaySpeed(right), self.checkHighwayVehicles(right)):
         self.changeLane(right)
-      elif self.isBetterLane(self.checkHighwaySpeed(left), self.checkHighwayVehicles(left)):
+      if self.isBetterLane(self.checkHighwaySpeed(left), self.checkHighwayVehicles(left)):
         self.changeLane(left)
-
+      
     elif (self.lane == 2): #Bot Lane
       if self.isBetterLane(self.checkHighwaySpeed(left), self.checkHighwayVehicles(left)):
         self.changeLane(left)
@@ -248,7 +253,7 @@ class RoadVehicleAgent(Agent):
   def testScenario1(self):
     right = 1
     left = -1
-    if self.velocity == 0 and self.lane == 1 : #Central Lane
+    if self.velocity == 0 and self.lane == 1 : #Central Lane   
       if self.canChangeLane(right):
         self.changeLane(right)
       elif self.canChangeLane(left):
@@ -265,9 +270,9 @@ class RoadVehicleAgent(Agent):
 
       if TEST_SCENARIO == 1 and self.status == 0: #Sin propuesta de solucion
         self.testScenario1()
-
+      
       elif TEST_SCENARIO == 0 and self.status == 0: #Con propuesta de solucion
-        self.testScenario0()
+        self.testScenario0() 
 
       self.accelerateOrDecelerate()
       self.moveForward()
@@ -277,20 +282,22 @@ class RoadVehicleAgent(Agent):
 
 class RoadModel(Model):
   def __init__ (self, width, height):
-    self.grid = SingleGrid(width, height, False) #Torus grid NO
-    self.distanceBetweenCheckpoints = int (HEIGHT / NUMBER_OF_CHECKPOINTS)
-    self.schedule = SimultaneousActivation(self)
-    self.datacollector = DataCollector(model_reporters={"Grid": get_grid})
+      self.grid = SingleGrid(width, height, False) #Torus grid NO
+      self.distanceBetweenCheckpoints = int (HEIGHT / NUMBER_OF_CHECKPOINTS)
+      self.schedule = SimultaneousActivation(self)
+      self.datacollector = DataCollector(model_reporters={"Grid": get_grid})
+      self.deletedAgents = []
 
-    self.highwaySpeed = np.full( (len(CARRILES), NUMBER_OF_CHECKPOINTS), INITIAL_VALUES[1])
-    self.highwayVehicles = np.full( (len(CARRILES), NUMBER_OF_CHECKPOINTS), INITIAL_VALUES[0])
+      self.highwaySpeed = np.full( (len(CARRILES), NUMBER_OF_CHECKPOINTS), INITIAL_VALUES[1])
+      self.highwayVehicles = np.full( (len(CARRILES), NUMBER_OF_CHECKPOINTS), INITIAL_VALUES[0])
 
-    #Place one car for the sake of the graphic
-    global ID_CAR
-    a = RoadVehicleAgent(ID_CAR, self, 0, (SPAWN_COORDS[0], 0), 0)
-    ID_CAR += 1
-    self.grid.place_agent(a, (SPAWN_COORDS[0], 0))
-    self.schedule.add(a)
+      #Place one car for the sake of the graphic 
+      global ID_CAR
+      ID_CAR += 1
+      a = RoadVehicleAgent(ID_CAR, self, 0, (SPAWN_COORDS[0], 0), 0)
+      ID_CAR += 1
+      self.grid.place_agent(a, (SPAWN_COORDS[0], 0))
+      self.schedule.add(a)
 
   def spawnCars(self):
     global ID_CAR
@@ -302,7 +309,16 @@ class RoadModel(Model):
         ID_CAR += 1
         self.grid.place_agent(a, (SPAWN_COORDS[i], 0))
         self.schedule.add(a)
-        #print (a.position)
+
+  def pushDeletedAgent(self, agent):
+    self.deletedAgents.append(agent)
+
+  def deleteAgents(self):
+    if len(self.deletedAgents) != 0:
+      for i in range(len(self.deletedAgents)):
+        self.schedule.remove(self.deletedAgents[i])
+        self.grid.remove_agent(self.deletedAgents[i])
+    self.deletedAgents.clear()
 
   def brokenCar(self):
     global ID_CAR
@@ -323,7 +339,7 @@ class RoadModel(Model):
           else:
             aux2 = int(j / self.distanceBetweenCheckpoints)
           self.highwayVehicles[i][aux2 - 1] = aux
-          aux = 0
+          aux = 0 
           aux2 = 0
 
   def step(self):
@@ -335,6 +351,8 @@ class RoadModel(Model):
       self.spawnCars()
     if (TEST_SCENARIO == 0):
       self.numOfAgentsPerCheckpoint()
+    #print(self.highwaySpeed)
     self.datacollector.collect(self)
     self.schedule.step()
+    self.deleteAgents()
     CURRENT_TIME += 1
