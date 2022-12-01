@@ -12,7 +12,7 @@ import time
 import datetime
 
 MAX_VELOCITY = 8 #m/s
-MAX_ITERATIONS = 200 #200 Sweet spot Siempre tiene que ser multiplo de 2 si no, no aparece el vehiculo roto
+MAX_ITERATIONS = 40 #200 Sweet spot Siempre tiene que ser multiplo de 2 si no, no aparece el vehiculo roto
 WIDTH = 30
 HEIGHT = 1000
 SPAWN_COORDS = [5, 15, 25]
@@ -32,7 +32,7 @@ NUMBER_OF_CHECKPOINTS = 5
 INITIAL_VALUES = [0, 0] #Firste number of cars, second average velocity
 
 
-TEST_SCENARIO = 0 #1 = Sin propuesta de solucion, 0 Con propuesta de solucion
+TEST_SCENARIO = 1 #1 = Sin propuesta de solucion, 0 Con propuesta de solucion
 
 def get_grid(model):
   grid = np.zeros( (model.grid.width, model.grid.height) )
