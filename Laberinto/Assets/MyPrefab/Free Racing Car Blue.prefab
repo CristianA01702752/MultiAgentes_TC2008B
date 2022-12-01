@@ -10,7 +10,7 @@ PrefabInstance:
     m_Modifications:
     - target: {fileID: 1248598967819147742, guid: c4cad50aa03bbca42938fe318344950b, type: 3}
       propertyPath: m_Name
-      value: Free Racing Car Blue Variant
+      value: Free Racing Car Blue
       objectReference: {fileID: 0}
     - target: {fileID: 1880317207959290724, guid: c4cad50aa03bbca42938fe318344950b, type: 3}
       propertyPath: m_RootOrder
@@ -105,7 +105,7 @@ MonoBehaviour:
   m_Script: {fileID: 11500000, guid: a632ab498d4c17b469facb787a2a934e, type: 3}
   m_Name: 
   m_EditorClassIdentifier: 
---- !u!114 &1766827685508677501
+--- !u!114 &-3259316602093365912
 MonoBehaviour:
   m_ObjectHideFlags: 0
   m_CorrespondingSourceObject: {fileID: 0}
@@ -114,7 +114,7 @@ MonoBehaviour:
   m_GameObject: {fileID: 4591691155392393144}
   m_Enabled: 1
   m_EditorHideFlags: 0
-  m_Script: {fileID: 11500000, guid: 5076af1b78917384bac8ef7a53e055f8, type: 3}
+  m_Script: {fileID: 11500000, guid: f1761dcc5cfe2b649b116dbbadd72e34, type: 3}
   m_Name: 
   m_EditorClassIdentifier: 
   id: 0
