@@ -1,5 +1,3 @@
-# MultiAgentes_TC2008B
-
 # Sistema de detección y prevención de congestionamiento 
 
 ### Iniciando :tw-2611:
@@ -12,5 +10,16 @@ Para correr el proyecto de manera correcta se requiere de los siguientes puntos:
 
 ### Instalación 
 La instalación puede ser lograda a través de: 
-`git clone 'https://github.com/CristianA01702752/MultiAgentes_TC2008B.git'
-descargar el zip directamente`
+Comando git clone
+- git clone 'https://github.com/CristianA01702752/MultiAgentes_TC2008B.git'
+- O descargando el archivo zip del repositorio
+
+### Ejecución del Proyecto
+Prerrequisitos:
+- Tener el proyecto de Unity abierto
+- Tener el archivo retomultiagentes.py y tc2008B_server.py en el mismo directorio
+
+Antes de ejecutar el proyecto dentro de Unity se tendrá que levantar el servidor con la ayuda de python.
+- El archivo a ejecutar es tc2008B_server.py
+Tras ejecutar este archivo se podra dar 'play' al proyecto dentro de Unity. 
+
