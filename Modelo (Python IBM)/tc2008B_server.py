@@ -16,15 +16,20 @@ import json, os
 
 WIDTH = 30
 HEIGHT = 1000
-POSITIONS = []
+MAIN_POS = []
+#TEST_SCENARIO = 0
+MAIN_SPEED =[]
+MAIN_VEHICLE = []
+
 
 model = RoadModel(WIDTH, HEIGHT)
 
-def take_third(POS):
+
+def return_ID(POS):
     return POS[3]
 
 def updatePositions():
-    POSITIONS.clear()
+    MAIN_POS.clear()
     global model
     model.step()
     matrix = np.array(get_grid(model))
@@ -35,8 +40,8 @@ def updatePositions():
             if (matrix[x, z] != 0):
                 #print(matrix[x,z])
                 pos = [x, z, 0, matrix_ids[x, z], matrix[x, z]]
-                POSITIONS.append(pos)
-                #print(POSITIONS)
+                MAIN_POS.append(pos)
+                #print(MAIN_POS)
                 
 
 def getId(id, ps):
@@ -62,6 +67,63 @@ def positionsToJSON(ps):
         #print(json.dumps(posDICT))
     return json.dumps(posDICT)
 
+#To Adquire highspeed array of the model
+def getCheckPointSpeed():
+    aux = 0
+    MAIN_SPEED.clear()
+    global model
+    for i in range(3):
+        for j in range(5):
+             speed = [model.highwaySpeed[i][j], aux]
+             MAIN_SPEED.append(speed)
+             aux += 1
+             #print(MAIN_SPEED)
+
+def speedToJSON(ps):
+    speDICT = []
+    for p in ps:
+        spe = {
+            "s": int(p[0]),
+            "id": p[1]
+        }
+        speDICT.append(spe)
+        #print(json.dumps(speDICT))
+    return json.dumps(speDICT)
+
+#To Adquire vehicle array of the model
+def getCheckPointVehicle():
+    aux = 0
+    MAIN_VEHICLE.clear()
+    global model
+    for i in range(3):
+        for j in range(5):
+             speed = [model.highwayVehicles[i][j], aux]
+             MAIN_VEHICLE.append(speed)
+             aux += 1
+             #print(MAIN_VEHICLE)
+
+def vehicleToJSON(ps):
+    vehDICT = []
+    for p in ps:
+        veh = {
+            "v": int(p[0]),
+            "id": p[1]
+        }
+        vehDICT.append(veh)
+        #print(json.dumps(vehDICT))
+    return json.dumps(vehDICT)
+
+def getCheckPointsID(id, arr):
+    val = None
+    for p in arr:
+        if p[1] == id:
+            val = p
+    
+    return val
+
+
+
+
 """
 Hello World app for running Python apps on Bluemix
 """
@@ -81,7 +143,7 @@ def checkPosition():
     if id is not None:
         id = float(id)
         
-        pos = getId(id, POSITIONS)
+        pos = getId(id, MAIN_POS)
         if pos is not None:
             pos = positionsToJSON([pos])
             return pos
@@ -95,13 +157,62 @@ def checkPosition():
 @app.route('/step', methods=['GET'])
 def modelStep():
     updatePositions()
-    sorted_pos = sorted(POSITIONS, key=take_third)
+    sorted_pos = sorted(MAIN_POS, key=return_ID)
     checkPosition()
     #print(sorted_pos)
     resp = "{\"data\":" + positionsToJSON(sorted_pos) + "}"
     #print(resp)
     return resp
 
+#CODE for checkpoints
+@app.route('/speed', methods=['GET'])
+def checkSpeed():
+    args = request.args
+    id = args.get('id')
+    if id is not None:
+        id = float(id)
+        
+        spe = getCheckPointsID(id, MAIN_SPEED)
+        if spe is not None:
+            spe = speedToJSON([spe])
+            return spe
+        else:
+            resp = "Speedn't"
+        return resp
+    else:
+        resp = "What did you break?"
+        return resp
+
+@app.route('/vehicle', methods=['GET'])
+def checkVehicle():
+    args = request.args
+    id = args.get('id')
+    if id is not None:
+        id = float(id)
+        
+        veh = getCheckPointsID(id, MAIN_VEHICLE)
+        if veh is not None:
+            veh = vehicleToJSON([veh])
+            return veh
+        else:
+            resp = "No vehicles?"
+        return resp
+    else:
+        resp = "What did you break, again?"
+        return resp
+
+
+@app.route('/speeds', methods=['GET'])
+def speedStep():
+    getCheckPointSpeed()
+    resp = "{\"data\":" + speedToJSON(MAIN_SPEED) + "}"
+    return resp
+
+@app.route('/vehicles', methods=['GET'])
+def vehicleStep():
+    getCheckPointVehicle()
+    resp = "{\"data\":" + vehicleToJSON(MAIN_VEHICLE) + "}"
+    return resp
 
 
 
