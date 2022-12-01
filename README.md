@@ -1,6 +1,6 @@
 # Sistema de detección y prevención de congestionamiento 
 
-### Iniciando :tw-2611:
+### Iniciando :tw-26f3:
 ------------
 Para correr el proyecto de manera correcta se requiere de los siguientes puntos:
 
@@ -8,13 +8,13 @@ Para correr el proyecto de manera correcta se requiere de los siguientes puntos:
 2. Tener instalada la version 2022.1.21f1 o mayor de Unity
 3. Haber instalado flake y mesa en el entorno de trabajo 
 
-### Instalación 
+### Instalación :tw-1f448:
 La instalación puede ser lograda a través de: 
 Comando git clone
 - git clone 'https://github.com/CristianA01702752/MultiAgentes_TC2008B.git'
 - O descargando el archivo zip del repositorio
 
-### Ejecución del Proyecto
+### Ejecución del Proyecto :tw-1f525:
 Prerrequisitos:
 - Tener el proyecto de Unity abierto
 - Tener el archivo retomultiagentes.py y tc2008B_server.py en el mismo directorio
