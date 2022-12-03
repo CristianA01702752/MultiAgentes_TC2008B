@@ -1,20 +1,25 @@
 using System.Collections;
 using System.Collections.Generic;
 using UnityEngine;
+using System;
+using UnityEngine.Networking;
 
 public class ColorChange : MonoBehaviour
 {
-    // Start is called before the first frame update
+   public int id;
+   public string position;
+   public string numCars;
+
     void Start()
     {
-  
+        
     }
 
-    // Update is called once per frame
-    void Update()
-    {
-        Material mymat = GetComponent<Renderer>().material;
-        mymat.SetColor("_EmissionColor", Color.red);
 
-    }
+// void Update(){
+    //   Material mymat = GetComponent<Renderer>().material;
+    //   mymat.SetColor("_EmissionColor", Color.red);
+// }
+
+
 }
